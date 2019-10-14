@@ -1,1 +1,2 @@
-export * from './hexagonBackground/hexagonBackground';
+export * from './hexagonBackground';
+export * from './navigation';
