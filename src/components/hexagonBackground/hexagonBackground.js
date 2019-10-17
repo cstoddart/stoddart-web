@@ -5,10 +5,11 @@ import { renderHexagons } from './renderHexagons';
 import { shapes } from './hiddenShapes';
 
 const Canvas = styled.canvas`
-  opacity: 0.08;
+  opacity: 0.05;
   position: absolute;
   top: 0;
   left: 0;
+  z-index: -1;
 `;
 
 function buildHexagonsByRow({ hexagonRows, hexagonsPerRow }) {
@@ -24,8 +25,8 @@ function buildHexagonsByRow({ hexagonRows, hexagonsPerRow }) {
 
 function hideHexagons(hexagonsByRow) {
   const hexagonMap = { ...hexagonsByRow };
-  const density = 7; // lower number is more dense
-  const variance = 3;
+  const density = 15; // lower number is more dense
+  const variance = 10;
 
   const numberOfAnimationsX = window.innerWidth / 8;
   const numberOfAnimationsY = window.innerHeight / 8;
@@ -43,6 +44,15 @@ function hideHexagons(hexagonsByRow) {
 export const HexagonBackground = () => {
   const canvasRef = useRef();
   const [context, setContext] = useState();
+  const [hexagonsByRow, setHexagonsByRow] = useState(null);
+  const [hexagonMap, setHexagonMap] = useState(null);
+
+  const hexagonWidth = 30;
+  const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
+  const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
+  const hexagonHeight = yOffset + sideLength + yOffset;
+  const hexagonsPerRow = window.innerWidth / hexagonWidth + 1;
+  const hexagonRows = (window.innerHeight / hexagonHeight) * 3;
 
   useEffect(() => {
     setContext(canvasRef.current.getContext('2d'));
@@ -53,17 +63,19 @@ export const HexagonBackground = () => {
   useEffect(() => {
     if (!context) return;
     context.strokeStyle = "#fff";
-
-    const hexagonWidth = 30;
-    const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
-    const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
-    const hexagonHeight = yOffset + sideLength + yOffset;
-    const hexagonsPerRow = window.innerWidth / hexagonWidth + 1;
-    const hexagonRows = (window.innerHeight / hexagonHeight) * 3;
-
     const hexagonsByRow = buildHexagonsByRow({ hexagonRows, hexagonsPerRow });
-    const hexagonMap = hideHexagons(hexagonsByRow);
+    setHexagonsByRow(hexagonsByRow);
+  }, [context, hexagonRows, hexagonsPerRow]);
 
+  useEffect(() => {
+    if (!hexagonsByRow) return;
+    const hexagonMap = hideHexagons(hexagonsByRow);
+    setHexagonMap(hexagonMap);
+  }, [hexagonsByRow]);
+
+  useEffect(() => {
+    if (!context || !hexagonsByRow) return;
+    context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     renderHexagons({
       context,
       hexagonWidth,
@@ -72,9 +84,19 @@ export const HexagonBackground = () => {
       hexagonHeight,
       hexagonRows,
       hexagonsPerRow,
-      hexagonMap,
+      hexagonMap: hexagonMap || hexagonsByRow,
     });
-  }, [context]);
+  }, [
+    context,
+    hexagonWidth,
+    yOffset,
+    sideLength,
+    hexagonHeight,
+    hexagonRows,
+    hexagonsPerRow,
+    hexagonsByRow,
+    hexagonMap,
+  ]);
 
   return (
     <Canvas ref={canvasRef}></Canvas>
