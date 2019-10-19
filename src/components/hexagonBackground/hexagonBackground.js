@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 
 import { renderHexagons } from './renderHexagons';
@@ -41,7 +41,7 @@ function hideHexagons(hexagonsByRow) {
   return hexagonMap;
 }
 
-export const HexagonBackground = () => {
+export const HexagonBackground = memo(() => {
   const canvasRef = useRef();
   const [context, setContext] = useState();
   const [hexagonsByRow, setHexagonsByRow] = useState(null);
@@ -101,4 +101,4 @@ export const HexagonBackground = () => {
   return (
     <Canvas ref={canvasRef}></Canvas>
   );
-}
+});

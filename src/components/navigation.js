@@ -3,25 +3,26 @@ import styled from 'styled-components';
 import { Link } from 'gatsby';
 
 const StyledNavigation = styled.div`
-  margin-top: 50px;
+  margin-top: 65px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-const Logo = styled(Link)`
-  font-size: 30px;
-  font-weight: bold;
+const NavigationItem = styled(Link)`
+  font-size: 22px;
+  font-weight: 600;
   cursor: pointer;
+  color: white;
 `;
 
-const NavigationItem = styled.span`
-  font-size: 22px;
+const Logo = styled(NavigationItem)`
+  font-size: 36px;
 `;
 
 export const Navigation = () => (
   <StyledNavigation>
-    <Logo to="/" as="h1">Stoddart Web</Logo>
-    <NavigationItem>Articles</NavigationItem>
+    <Logo to="/">Stoddart Web</Logo>
+    <NavigationItem to="/articles">Articles</NavigationItem>
   </StyledNavigation>
 );

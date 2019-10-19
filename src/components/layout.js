@@ -11,10 +11,10 @@ const PageContainer = styled.div`
 `;
 
 const MainContent = styled.div`
-  padding: 100px;
+  padding: 150px 100px;
 `;
 
-const Layout = ({ children }) => {
+export const Layout = ({ children }) => {
   return (
     <>
       <GlobalStyles />
