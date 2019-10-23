@@ -1,4 +1,4 @@
-const  createHexagonRenderer = ({ context, hexagonWidth, yOffset, sideLength }) => ({ initialX, initialY }) => {
+const  createHexagonRenderer = ({ canvasContext, hexagonWidth, yOffset, sideLength }) => ({ initialX, initialY }) => {
   let currentX = initialX;
   let currentY = initialY;
 
@@ -79,19 +79,20 @@ const  createHexagonRenderer = ({ context, hexagonWidth, yOffset, sideLength }) 
       newY,
     ];
   };
-  context.beginPath();
-  context.moveTo(initialX, initialY);
-  context.lineTo(...side1());
-  context.lineTo(...side2());
-  context.lineTo(...side3());
-  context.lineTo(...side4());
-  context.lineTo(...side5());
-  context.lineTo(...side6());
-  context.stroke();
+  canvasContext.beginPath();
+  canvasContext.moveTo(initialX, initialY);
+  canvasContext.lineTo(...side1());
+  canvasContext.lineTo(...side2());
+  canvasContext.lineTo(...side3());
+  canvasContext.lineTo(...side4());
+  canvasContext.lineTo(...side5());
+  canvasContext.lineTo(...side6());
+  canvasContext.stroke();
 };
 
 export function renderHexagons({
-  context,
+  canvasContext,
+  canvasRef,
   hexagonWidth,
   yOffset,
   sideLength,
@@ -100,12 +101,13 @@ export function renderHexagons({
   hexagonsPerRow,
   hexagonMap,
 }) {
+  canvasContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
   for (let rowIndex = 0; rowIndex < hexagonRows; rowIndex++) {
     for (let hexagonIndex = 0; hexagonIndex < hexagonsPerRow; hexagonIndex++) {
-      if (hexagonMap[rowIndex][hexagonIndex] === false) continue;
+      if (!hexagonMap[rowIndex] || hexagonMap[rowIndex][hexagonIndex] === false) continue;
 
       const renderHexagon = createHexagonRenderer({
-        context,
+        canvasContext,
         hexagonWidth,
         yOffset,
         sideLength,

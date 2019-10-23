@@ -36,9 +36,16 @@ module.exports = {
       },
     },
     {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'app',
+        path: `${__dirname}/src`,
+      },
+    },
+    {
       resolve: 'gatsby-plugin-layout',
       options: {
-        component: require.resolve('./src/components/layout'),
+        component: require.resolve('./src/app'),
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

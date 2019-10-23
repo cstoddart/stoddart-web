@@ -1,13 +1,19 @@
-import React, { useRef, useState, useEffect, memo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { renderHexagons } from './renderHexagons';
-import { shapes } from './hiddenShapes';
+import { hiddenShapes } from './hiddenShapes';
+import { getPageHeight } from '../../utilities';
 
-const Canvas = styled.canvas`
+const hexagonWidth = 30;
+const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
+const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
+const hexagonHeight = yOffset + sideLength + yOffset;
+
+const StyledCanvas = styled.canvas`
   opacity: 0.05;
   position: absolute;
-  top: 0;
+  top: ${({ top }) => top || '0'}px;
   left: 0;
   z-index: -1;
 `;
@@ -25,80 +31,89 @@ function buildHexagonsByRow({ hexagonRows, hexagonsPerRow }) {
 
 function hideHexagons(hexagonsByRow) {
   const hexagonMap = { ...hexagonsByRow };
-  const density = 15; // lower number is more dense
+  const density = 20; // lower number is more dense
   const variance = 10;
 
-  const numberOfAnimationsX = window.innerWidth / 8;
-  const numberOfAnimationsY = window.innerHeight / 8;
-  for (let xIndex = 0; xIndex < numberOfAnimationsX; xIndex++) {
-    for (let yIndex = 0; yIndex < numberOfAnimationsY; yIndex++) {
-        const randomIndex = Math.floor(Math.random() * shapes.length);
-        const randomX = Math.floor(Math.random() * variance) + (xIndex * density);
-        const randomY = Math.floor(Math.random() * variance) + (yIndex * density);
-      shapes[randomIndex]({ hexagonMap, initialX: randomX, initialY: randomY });
+  const hiddenShapCountX = window.innerWidth / 8;
+  const hiddenShapCountY = window.innerHeight / 8;
+  for (let xIndex = 0; xIndex < hiddenShapCountX; xIndex++) {
+    for (let yIndex = 0; yIndex < hiddenShapCountY; yIndex++) {
+      const randomIndex = Math.floor(Math.random() * hiddenShapes.length);
+      const randomX = Math.floor(Math.random() * variance) + (xIndex * density);
+      const randomY = Math.floor(Math.random() * variance) + (yIndex * density);
+      hiddenShapes[randomIndex]({ hexagonMap, initialX: randomX, initialY: randomY });
     }
   }
   return hexagonMap;
 }
 
-export const HexagonBackground = memo(() => {
+const DuplicateCanvas = ({ originalCanvas, index }) => {
   const canvasRef = useRef();
-  const [context, setContext] = useState();
-  const [hexagonsByRow, setHexagonsByRow] = useState(null);
-  const [hexagonMap, setHexagonMap] = useState(null);
+  const [topOffset, setTopOffset] = useState(0);
 
-  const hexagonWidth = 30;
-  const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
-  const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
-  const hexagonHeight = yOffset + sideLength + yOffset;
+  useEffect(() => {
+    canvasRef.current.width = originalCanvas.width;
+    canvasRef.current.height = originalCanvas.height;
+
+    const canvasContext = canvasRef.current.getContext('2d');
+    canvasContext.strokeStyle = '#0F0';
+    canvasContext.lineWidth = 1.75;
+    canvasContext.drawImage(originalCanvas, 0, 0);
+
+    setTopOffset((index + 1) * originalCanvas.height);
+  }, [canvasRef, originalCanvas, index]);
+
+  return (
+    <StyledCanvas ref={canvasRef} top={topOffset} />
+  );
+}
+
+export const HexagonBackground = () => {
+  const canvasRef = useRef();
+  const [duplicateCanvases, setDuplicateCanvases] = useState([]);
+
+  const pageHeight = getPageHeight();
   const hexagonsPerRow = window.innerWidth / hexagonWidth + 1;
-  const hexagonRows = (window.innerHeight / hexagonHeight) * 3;
-
+  const hexagonRows = (pageHeight / hexagonHeight) * 3;
+  
   useEffect(() => {
-    setContext(canvasRef.current.getContext('2d'));
+    // Set canvas dimensions
     canvasRef.current.width = window.innerWidth;
-    canvasRef.current.height = window.innerHeight;
-  }, [canvasRef]);
+    canvasRef.current.height = Math.floor(window.innerHeight / hexagonHeight) * hexagonHeight;
+  
+    // Get canvas context
+    const canvasContext = canvasRef.current.getContext('2d');
+    canvasContext.strokeStyle = '#fff';
+    canvasContext.lineWidth = 0.75;
 
-  useEffect(() => {
-    if (!context) return;
-    context.strokeStyle = "#fff";
+    // Determine number of canvases needed
+    const totalCanvasCount = Math.ceil(pageHeight / window.innerHeight);
+    const duplicateCanvasCount = totalCanvasCount - 1;
+    const arr = [...Array(duplicateCanvasCount).keys()];
+    setDuplicateCanvases(arr);
+
+    // Render map with hidden shapes
     const hexagonsByRow = buildHexagonsByRow({ hexagonRows, hexagonsPerRow });
-    setHexagonsByRow(hexagonsByRow);
-  }, [context, hexagonRows, hexagonsPerRow]);
-
-  useEffect(() => {
-    if (!hexagonsByRow) return;
     const hexagonMap = hideHexagons(hexagonsByRow);
-    setHexagonMap(hexagonMap);
-  }, [hexagonsByRow]);
-
-  useEffect(() => {
-    if (!context || !hexagonsByRow) return;
-    context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     renderHexagons({
-      context,
+      canvasContext,
+      canvasRef,
       hexagonWidth,
       yOffset,
       sideLength,
       hexagonHeight,
       hexagonRows,
       hexagonsPerRow,
-      hexagonMap: hexagonMap || hexagonsByRow,
+      hexagonMap,
     });
-  }, [
-    context,
-    hexagonWidth,
-    yOffset,
-    sideLength,
-    hexagonHeight,
-    hexagonRows,
-    hexagonsPerRow,
-    hexagonsByRow,
-    hexagonMap,
-  ]);
+  }, [pageHeight, canvasRef, hexagonRows, hexagonsPerRow]);
 
   return (
-    <Canvas ref={canvasRef}></Canvas>
+    <>
+      <StyledCanvas ref={canvasRef} />
+      {duplicateCanvases.map((index) => (
+        <DuplicateCanvas originalCanvas={canvasRef.current} index={index} key={index} />
+      ))}
+    </>
   );
-});
+};
