@@ -14,7 +14,7 @@ const StyledCanvas = styled.canvas`
   opacity: 0.05;
   position: absolute;
   top: ${({ top }) => top || '0'}px;
-  left: 0;
+  left: ${({ even }) => even ? hexagonWidth / 2 * -1 : 0}px;
   z-index: -1;
 `;
 
@@ -60,21 +60,24 @@ const DuplicateCanvas = ({ originalCanvas, index }) => {
     canvasContext.lineWidth = 1.75;
     canvasContext.drawImage(originalCanvas, 0, 0);
 
-    setTopOffset((index + 1) * originalCanvas.height);
+    setTopOffset((index + 1) * originalCanvas.height - yOffset);
   }, [canvasRef, originalCanvas, index]);
 
   return (
-    <StyledCanvas ref={canvasRef} top={topOffset} />
+    <StyledCanvas ref={canvasRef} top={topOffset} even={index % 2 === 0 ? true : false} />
   );
 }
 
-export const HexagonBackground = () => {
+export const HexagonBackground = ({ location }) => {
   const canvasRef = useRef();
   const [duplicateCanvases, setDuplicateCanvases] = useState([]);
+  const [freshRender, setFreshRender] = useState(false);
 
-  const pageHeight = getPageHeight();
+  let pageHeight = getPageHeight();
   const hexagonsPerRow = window.innerWidth / hexagonWidth + 1;
-  const hexagonRows = (pageHeight / hexagonHeight) * 3;
+  const hexagonRows = (window.innerHeight / hexagonHeight) * 3;
+
+  let currentPath = '';
   
   useEffect(() => {
     // Set canvas dimensions
@@ -85,12 +88,6 @@ export const HexagonBackground = () => {
     const canvasContext = canvasRef.current.getContext('2d');
     canvasContext.strokeStyle = '#fff';
     canvasContext.lineWidth = 0.75;
-
-    // Determine number of canvases needed
-    const totalCanvasCount = Math.ceil(pageHeight / window.innerHeight);
-    const duplicateCanvasCount = totalCanvasCount - 1;
-    const arr = [...Array(duplicateCanvasCount).keys()];
-    setDuplicateCanvases(arr);
 
     // Render map with hidden shapes
     const hexagonsByRow = buildHexagonsByRow({ hexagonRows, hexagonsPerRow });
@@ -107,6 +104,27 @@ export const HexagonBackground = () => {
       hexagonMap,
     });
   }, [pageHeight, canvasRef, hexagonRows, hexagonsPerRow]);
+
+  useEffect(() => {
+    if (location.pathname === currentPath) return;
+
+    // Reset page
+    currentPath = location.pathname;
+    setDuplicateCanvases([]);
+    setFreshRender(true);
+  }, [location]);
+  
+  useEffect(() => {
+    if (!freshRender) return;
+    setFreshRender(false);
+
+    // Determine number of canvases needed
+    pageHeight = getPageHeight();
+    const totalCanvasCount = Math.ceil(pageHeight / window.innerHeight);
+    const duplicateCanvasCount = totalCanvasCount - 1;
+    const arr = [...Array(duplicateCanvasCount).keys()];
+    setDuplicateCanvases(arr);
+  }, [freshRender]);
 
   return (
     <>

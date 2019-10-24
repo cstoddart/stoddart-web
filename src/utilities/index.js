@@ -7,6 +7,6 @@ export function getPageHeight() {
     body.offsetHeight,
     html.clientHeight,
     html.scrollHeight,
-    html.offsetHeight
+    html.offsetHeight,
   );
 }

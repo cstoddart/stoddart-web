@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Location } from '@reach/router';
 
 import { HexagonBackground } from './components/hexagonBackground';
 import { Navigation } from './components/navigation';
@@ -16,14 +17,18 @@ const MainContent = styled.div`
 
 export const App = ({ children }) => {
   return (
-    <>
-      <GlobalStyles />
-      <PageContainer>
-        <Navigation />
-        <MainContent>{children}</MainContent>
-      </PageContainer>
-      <HexagonBackground />
-    </>
+    <Location>
+      {({ location }) => (
+        <>
+          <GlobalStyles />
+          <PageContainer>
+            <Navigation />
+            <MainContent>{children}</MainContent>
+          </PageContainer>
+          <HexagonBackground location={location} />
+        </>
+      )}
+    </Location>
   );
 };
 
