@@ -1,22 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import styled from 'styled-components';
 
 import { renderHexagons } from './renderHexagons';
 import { hiddenShapes } from './hiddenShapes';
 import { getPageHeight } from '../../utilities';
-
-const hexagonWidth = 30;
-const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
-const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
-const hexagonHeight = yOffset + sideLength + yOffset;
-
-const StyledCanvas = styled.canvas`
-  opacity: 0.05;
-  position: absolute;
-  top: ${({ top }) => top || '0'}px;
-  left: ${({ even }) => even ? hexagonWidth / 2 * -1 : 0}px;
-  z-index: -1;
-`;
+import { DuplicateCanvas } from './duplicateCanvas';
+import { StyledCanvas } from './styled';
 
 function buildHexagonsByRow({ hexagonRows, hexagonsPerRow }) {
   const hexagonsByRow = {};
@@ -47,50 +35,55 @@ function hideHexagons(hexagonsByRow) {
   return hexagonMap;
 }
 
-const DuplicateCanvas = ({ originalCanvas, index }) => {
-  const canvasRef = useRef();
-  const [topOffset, setTopOffset] = useState(0);
-
-  useEffect(() => {
-    canvasRef.current.width = originalCanvas.width;
-    canvasRef.current.height = originalCanvas.height;
-
-    const canvasContext = canvasRef.current.getContext('2d');
-    canvasContext.strokeStyle = '#0F0';
-    canvasContext.lineWidth = 1.75;
-    canvasContext.drawImage(originalCanvas, 0, 0);
-
-    setTopOffset((index + 1) * originalCanvas.height - yOffset);
-  }, [canvasRef, originalCanvas, index]);
-
-  return (
-    <StyledCanvas ref={canvasRef} top={topOffset} even={index % 2 === 0 ? true : false} />
-  );
-}
-
 export const HexagonBackground = ({ location }) => {
   const canvasRef = useRef();
+  const currentPathRef = useRef();
+  
   const [duplicateCanvases, setDuplicateCanvases] = useState([]);
-  const [freshRender, setFreshRender] = useState(false);
+  const [pageHeight, setPageHeight] = useState(null);
+  
+  const hexagonDimensions = useRef({});
+  const hexagonsPerRow = useRef(null);
+  const hexagonRows = useRef(null);
 
-  let pageHeight = getPageHeight();
-  const hexagonsPerRow = window.innerWidth / hexagonWidth + 1;
-  const hexagonRows = (window.innerHeight / hexagonHeight) * 3;
-
-  let currentPath = '';
+  useEffect(() => {
+    //Set hexagon dimensions
+    const hexagonWidth = 30;
+    const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
+    const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
+    const hexagonHeight = yOffset + sideLength + yOffset;
+    const sectionHeight = (6 * yOffset) + (4 * sideLength);
+    hexagonDimensions.current = {
+      hexagonWidth,
+      yOffset,
+      sideLength,
+      hexagonHeight,
+      sectionHeight,
+    };
+    hexagonsPerRow.current = window.innerWidth / hexagonWidth + 1;
+    hexagonRows.current = (window.innerHeight / hexagonHeight) * 3; // This 3 could probably be replaced by a calculation
+  }, []);
   
   useEffect(() => {
+    const {
+      hexagonWidth,
+      yOffset,
+      sideLength,
+      hexagonHeight,
+      sectionHeight,
+    } = hexagonDimensions.current;
+
     // Set canvas dimensions
-    canvasRef.current.width = window.innerWidth;
-    canvasRef.current.height = Math.floor(window.innerHeight / hexagonHeight) * hexagonHeight;
-  
+    canvasRef.current.width = window.innerWidth + (hexagonWidth / 2);
+    canvasRef.current.height = Math.ceil(window.innerHeight / sectionHeight) * sectionHeight;
+
     // Get canvas context
     const canvasContext = canvasRef.current.getContext('2d');
     canvasContext.strokeStyle = '#fff';
     canvasContext.lineWidth = 0.75;
 
     // Render map with hidden shapes
-    const hexagonsByRow = buildHexagonsByRow({ hexagonRows, hexagonsPerRow });
+    const hexagonsByRow = buildHexagonsByRow({ hexagonRows: hexagonRows.current, hexagonsPerRow: hexagonsPerRow.current });
     const hexagonMap = hideHexagons(hexagonsByRow);
     renderHexagons({
       canvasContext,
@@ -99,38 +92,46 @@ export const HexagonBackground = ({ location }) => {
       yOffset,
       sideLength,
       hexagonHeight,
-      hexagonRows,
-      hexagonsPerRow,
+      hexagonRows: hexagonRows.current,
+      hexagonsPerRow: hexagonsPerRow.current,
       hexagonMap,
     });
-  }, [pageHeight, canvasRef, hexagonRows, hexagonsPerRow]);
+  }, [canvasRef, hexagonRows, hexagonsPerRow]);
 
   useEffect(() => {
-    if (location.pathname === currentPath) return;
+    if (location.pathname === currentPathRef.current) return;
 
     // Reset page
-    currentPath = location.pathname;
+    currentPathRef.current = location.pathname;
     setDuplicateCanvases([]);
-    setFreshRender(true);
+    setTimeout(() => {
+      const height = getPageHeight();
+      setPageHeight(height);
+    }, 100); // Wait for clientHeight to reach full values
   }, [location]);
-  
+
   useEffect(() => {
-    if (!freshRender) return;
-    setFreshRender(false);
+    if (!pageHeight) return;
 
     // Determine number of canvases needed
-    pageHeight = getPageHeight();
-    const totalCanvasCount = Math.ceil(pageHeight / window.innerHeight);
+    const totalCanvasCount = Math.ceil(pageHeight / canvasRef.current.height);
     const duplicateCanvasCount = totalCanvasCount - 1;
-    const arr = [...Array(duplicateCanvasCount).keys()];
-    setDuplicateCanvases(arr);
-  }, [freshRender]);
+    setDuplicateCanvases([...Array(duplicateCanvasCount).keys()]);
+  }, [pageHeight]);
 
   return (
     <>
-      <StyledCanvas ref={canvasRef} />
+      <StyledCanvas ref={canvasRef} hexagonWidth={hexagonDimensions.current.hexagonWidth} />
       {duplicateCanvases.map((index) => (
-        <DuplicateCanvas originalCanvas={canvasRef.current} index={index} key={index} />
+        <DuplicateCanvas
+          key={index}
+          originalCanvas={canvasRef.current}
+          index={index}
+          isLast={index === duplicateCanvases.length -1}
+          pageHeight={pageHeight}
+          hexagonWidth={hexagonDimensions.current.hexagonWidth}
+          yOffset={hexagonDimensions.current.yOffset}
+        />
       ))}
     </>
   );

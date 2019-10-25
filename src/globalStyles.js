@@ -28,6 +28,8 @@ export const GlobalStyles = createGlobalStyle`
     background-color: #125;
     color: white;
     font-family: Montserrat;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
 
   h1, h2, h3, h4, h5, h6, p {

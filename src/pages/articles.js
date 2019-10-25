@@ -1,12 +1,23 @@
 import React from 'react';
 import { graphql, Link } from 'gatsby';
+import styled from 'styled-components';
+
+const ArticleListItem = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ArticleListItemTitle = styled.h2`
+  color: white;
+`;
 
 const PostLink = ({ post }) => (
-  <div>
-    <Link to={post.frontmatter.path}>
-      {post.frontmatter.title} ({post.frontmatter.date})
-    </Link>
-  </div>
+  <Link to={post.frontmatter.path}>
+    <ArticleListItem>
+      <ArticleListItemTitle>{post.frontmatter.title}</ArticleListItemTitle>
+      <h5>{post.frontmatter.date}</h5>
+    </ArticleListItem>
+  </Link>
 );
 
 const Articles = ({
@@ -19,7 +30,7 @@ const Articles = ({
     .map(edge => <PostLink key={edge.node.id} post={edge.node} />)
 
   return <>{Posts}</>
-}
+};
 
 export default Articles;
 
