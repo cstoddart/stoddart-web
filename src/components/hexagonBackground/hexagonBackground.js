@@ -52,7 +52,7 @@ export const HexagonBackground = ({ location }) => {
     const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
     const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
     const hexagonHeight = yOffset + sideLength + yOffset;
-    const sectionHeight = (6 * yOffset) + (4 * sideLength);
+    const sectionHeight = (4 * yOffset) + (4 * sideLength);
     hexagonDimensions.current = {
       hexagonWidth,
       yOffset,
@@ -61,7 +61,8 @@ export const HexagonBackground = ({ location }) => {
       sectionHeight,
     };
     hexagonsPerRow.current = window.innerWidth / hexagonWidth + 1;
-    hexagonRows.current = (window.innerHeight / hexagonHeight) * 3; // This 3 could probably be replaced by a calculation
+    const neededRows = Math.ceil(window.innerHeight / sectionHeight);
+    hexagonRows.current = 8 * neededRows; // 8 rows needed per section
   }, []);
   
   useEffect(() => {
@@ -75,7 +76,9 @@ export const HexagonBackground = ({ location }) => {
 
     // Set canvas dimensions
     canvasRef.current.width = window.innerWidth + (hexagonWidth / 2);
-    canvasRef.current.height = Math.ceil(window.innerHeight / sectionHeight) * sectionHeight;
+    const neededSections = Math.ceil(window.innerHeight / sectionHeight);
+    const height = (sectionHeight * neededSections) + yOffset;
+    canvasRef.current.height = height;
 
     // Get canvas context
     const canvasContext = canvasRef.current.getContext('2d');

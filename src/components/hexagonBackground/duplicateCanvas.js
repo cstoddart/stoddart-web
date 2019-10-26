@@ -8,8 +8,8 @@ export const DuplicateCanvas = ({ originalCanvas, index, isLast, pageHeight, hex
 
   useEffect(() => {
     if (isLast) {
-      const height = pageHeight - (originalCanvas.height * (index + 1)) ;
-      canvasRef.current.height = height;
+      const height = pageHeight - (originalCanvas.height * (index + 1));
+      canvasRef.current.height = height + (yOffset * (index + 1));
     } else {
       canvasRef.current.height = originalCanvas.height;
     }
@@ -18,14 +18,13 @@ export const DuplicateCanvas = ({ originalCanvas, index, isLast, pageHeight, hex
     const canvasContext = canvasRef.current.getContext('2d');
     canvasContext.drawImage(originalCanvas, 0, 0);
 
-    setTopOffset((index + 1) * originalCanvas.height - yOffset);
+    setTopOffset((index + 1) * originalCanvas.height - (yOffset * (index + 1)));
   }, [canvasRef, originalCanvas, index, isLast, pageHeight, yOffset]);
 
   return (
     <StyledCanvas
       ref={canvasRef}
       top={topOffset}
-      even={index % 2 === 0}
       hexagonWidth={hexagonWidth}
     />
   );
