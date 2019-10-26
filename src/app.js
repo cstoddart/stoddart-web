@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Location } from '@reach/router';
+import { Helmet } from 'react-helmet';
 
 import { HexagonBackground } from './components/hexagonBackground';
 import { Navigation } from './components/navigation';
@@ -20,6 +21,9 @@ export const App = ({ children }) => {
     <Location>
       {({ location }) => (
         <>
+          <Helmet>
+            <title>Stoddart Web</title>
+          </Helmet>
           <GlobalStyles />
           <PageContainer>
             <Navigation />
