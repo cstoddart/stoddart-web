@@ -1,7 +1,7 @@
 ---
 path: "/post"
-date: "2019-05-04"
-title: "My post"
+date: "2019-10-31"
+title: "Using Framer Motion"
 ---
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Feugiat in fermentum posuere urna. Rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar pellentesque. Est sit amet facilisis magna. Cum sociis natoque penatibus et magnis dis parturient montes. Urna porttitor rhoncus dolor purus non enim praesent elementum facilisis. Quis blandit turpis cursus in hac habitasse. Amet est placerat in egestas erat imperdiet sed euismod nisi. Augue neque gravida in fermentum et sollicitudin ac orci phasellus. Leo a diam sollicitudin tempor id eu. Mauris ultrices eros in cursus. Lacus luctus accumsan tortor posuere ac ut consequat semper viverra. Magna fermentum iaculis eu non diam.
 

@@ -25,23 +25,34 @@ export const GlobalStyles = createGlobalStyle`
 
   body {
     margin: 0;
-    background-color: #125;
+    background-color: #014;
     color: white;
     font-family: Montserrat;
     overflow-x: hidden;
     overflow-y: scroll;
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+    word-spacing: 1px;
+    font-size: 18px;
   }
 
-  h1, h2, h3, h4, h5, h6, p {
+  h1, h2, h3, h4, h5, h6 {
     margin: 0;
-  }
-
-  h1 {
     letter-spacing: 1px;
   }
 
   a {
     color: #67a;
     text-decoration: none;
+    transition: 0.3s;
+  }
+
+  a:hover {
+    color: #fc1;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 50px;
   }
 `;

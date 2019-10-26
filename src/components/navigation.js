@@ -13,16 +13,18 @@ const NavigationItem = styled(Link)`
   font-size: 22px;
   cursor: pointer;
   color: white;
-  `;
-  
-  const Logo = styled(NavigationItem)`
+`;
+
+const Logo = styled(NavigationItem)`
   font-weight: 600;
   font-size: 36px;
 `;
 
 export const Navigation = () => (
   <StyledNavigation>
-    <Logo to="/">Stoddart Web</Logo>
+    <h1>
+      <Logo to="/">Stoddart Web</Logo>
+    </h1>
     <NavigationItem to="/articles">Articles</NavigationItem>
   </StyledNavigation>
 );

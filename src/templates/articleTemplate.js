@@ -6,10 +6,6 @@ const PostHeader = styled.div`
   margin-bottom: 50px;
 `;
 
-const PostTitle = styled.h1`
-  margin-bottom: 5px;
-`;
-
 const PostDate = styled.h5`
   font-size: 14px;
 `;
@@ -22,7 +18,7 @@ export default function Template({
   return (
     <>
       <PostHeader>
-        <PostTitle>{frontmatter.title}</PostTitle>
+        <h1>{frontmatter.title}</h1>
         <PostDate>{frontmatter.date}</PostDate>
       </PostHeader>
       <div
