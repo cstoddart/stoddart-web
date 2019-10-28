@@ -16,7 +16,7 @@ const PageContainer = styled.div`
 `;
 
 const MainContent = styled.div`
-  padding: 150px 50px;
+  padding: 150px 75px;
   min-height: ${({ navigationHeight, footerHeight }) =>
     `calc(100vh - ${navigationHeight}px - ${footerHeight}px)`
   };
