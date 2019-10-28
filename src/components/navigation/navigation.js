@@ -25,7 +25,7 @@ export const Navigation = ({ setNavigationHeight }) => {
 
   useEffect(() => {
     setNavigationHeight(navigationRef.current.clientHeight);
-  }, []);
+  }, [setNavigationHeight]);
 
   return (
     <StyledNavigation ref={navigationRef}>

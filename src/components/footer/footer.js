@@ -21,7 +21,7 @@ export const Footer = ({ setFooterHeight }) => {
 
   useEffect(() => {
     setFooterHeight(footerRef.current.clientHeight);
-  }, []);
+  }, [setFooterHeight]);
 
   return (
     <StyledFooter ref={footerRef}>
