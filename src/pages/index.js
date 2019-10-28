@@ -1,13 +1,14 @@
 import React from 'react';
-import { Link } from 'gatsby';
+
+import { Button } from '../components';
 
 const IndexPage = () => {
   return (
     <>
-      <h1>Hi people</h1>
-      <p>Welcome to your new Gatsby site.</p>
+      <h1>To Infinity And Beyond</h1>
+      <p>Welcome to Stoddart Web.</p>
       <p>Now go build something great.</p>
-      <Link to="/articles/">Go to page 2</Link>
+      <Button to="/articles/">Go To Articles</Button>
     </>
   );
 };

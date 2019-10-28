@@ -1,23 +1,37 @@
 import React from 'react';
 import { graphql, Link } from 'gatsby';
 import styled from 'styled-components';
+import { colors } from '../constants';
 
-const ArticleListItem = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledPostLink = styled(Link)`
+  display: block;
+
+  & + & {
+    margin-top: 50px;
+  }
 `;
 
 const ArticleListItemTitle = styled.h2`
   color: white;
+  transition: 0.3s;
+`;
+
+const ArticleListItem = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  &:hover ${ArticleListItemTitle} {
+    color: ${colors.yellow};
+  }
 `;
 
 const PostLink = ({ post }) => (
-  <Link to={post.frontmatter.path}>
+  <StyledPostLink to={post.frontmatter.path}>
     <ArticleListItem>
       <ArticleListItemTitle>{post.frontmatter.title}</ArticleListItemTitle>
       <h5>{post.frontmatter.date}</h5>
     </ArticleListItem>
-  </Link>
+  </StyledPostLink>
 );
 
 const Articles = ({

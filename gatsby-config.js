@@ -30,20 +30,6 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-source-filesystem',
-      options: {
-        name: 'images',
-        path: `${__dirname}/src/images`,
-      },
-    },
-    {
-      resolve: 'gatsby-source-filesystem',
-      options: {
-        name: 'app',
-        path: `${__dirname}/src`,
-      },
-    },
-    {
       resolve: 'gatsby-plugin-layout',
       options: {
         component: require.resolve('./src/app'),

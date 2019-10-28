@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 import montserratRegular from './fonts/montserratRegular.ttf';
 import montserratSemiBold from './fonts/montserratSemiBold.ttf';
 import montserratBold from './fonts/montserratSemiBold.ttf';
+import { colors } from './constants';
 
 export const GlobalStyles = createGlobalStyle`
   @font-face {
@@ -23,9 +24,13 @@ export const GlobalStyles = createGlobalStyle`
     font-weight: 700;
   }
 
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
-    background-color: #014;
+    background-color: ${colors.blue};
     color: white;
     font-family: Montserrat;
     overflow-x: hidden;
@@ -42,13 +47,13 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   a {
-    color: #67a;
+    color: ${colors.lightBlue};
     text-decoration: none;
     transition: 0.3s;
   }
 
   a:hover {
-    color: #fc1;
+    color: ${colors.yellow};
   }
 
   p {
