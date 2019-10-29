@@ -16,8 +16,8 @@ module.exports = {
         name: 'Stoddart Web',
         short_name: 'Stoddart Web',
         start_url: '/',
-        background_color: '#014',
-        theme_color: '#014',
+        background_color: '#002',
+        theme_color: '#002',
         display: 'minimal-ui',
         icon: 'src/images/favicon.png', // This path is relative to the root of the site.
       },
