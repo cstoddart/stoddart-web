@@ -1,0 +1,23 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run a one-line script
+      run: echo Running GitHub action...
+    - name: Run a multi-line script
+      run: |
+        echo Add other actions to build,
+        echo test, and deploy your project.
+    - name: Github Action for Gatsby CLI
+      uses: jzweifel/gatsby-cli-github-action@v1.0.0
+    - name: Firebase Deploy
+      uses: jakejarvis/firebase-deploy-action@v0.1.0
+
+
