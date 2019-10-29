@@ -3,3 +3,5 @@ export const colors = {
   lightBlue: '#67a',
   yellow: '#fc1',
 };
+
+export const mobileBreakpoint = 750;

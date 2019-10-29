@@ -3,7 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 import montserratRegular from './fonts/montserratRegular.ttf';
 import montserratSemiBold from './fonts/montserratSemiBold.ttf';
 import montserratBold from './fonts/montserratSemiBold.ttf';
-import { colors } from './constants';
+import { colors, mobileBreakpoint } from './constants';
 
 export const GlobalStyles = createGlobalStyle`
   @font-face {
@@ -39,6 +39,10 @@ export const GlobalStyles = createGlobalStyle`
     letter-spacing: 0.5px;
     word-spacing: 1px;
     font-size: 18px;
+
+    @media (max-width: ${mobileBreakpoint}px) {
+      font-size: 17px;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {

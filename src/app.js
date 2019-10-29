@@ -9,9 +9,11 @@ import {
   HexagonBackground,
 } from './components';
 import { GlobalStyles } from './globalStyles';
+import { mobileBreakpoint } from './constants';
 
 const PageContainer = styled.div`
   max-width: 800px;
+  width: 90%;
   margin: 0 auto;
 `;
 
@@ -20,6 +22,10 @@ const MainContent = styled.div`
   min-height: ${({ navigationHeight, footerHeight }) =>
     `calc(100vh - ${navigationHeight}px - ${footerHeight}px)`
   };
+
+  @media (max-width: ${mobileBreakpoint}px) {
+    padding: 50px 15px;
+  }
 `;
 
 export const App = ({ children }) => {
