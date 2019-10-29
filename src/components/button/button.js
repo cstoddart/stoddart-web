@@ -14,6 +14,7 @@ export const Button = styled.a.attrs(({ to }) => ({
   cursor: pointer;
   padding: 10px 20px;
   border-radius: 15px;
+  line-height: 1.2;
 
   &:hover {
     color: ${colors.blue};

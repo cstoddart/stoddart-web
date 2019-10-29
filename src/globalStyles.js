@@ -50,7 +50,7 @@ export const GlobalStyles = createGlobalStyle`
     margin: 0;
     margin-bottom: 15px;
     letter-spacing: 1px;
-    line-height: 1;
+    line-height: 1.2;
   }
 
   a {
