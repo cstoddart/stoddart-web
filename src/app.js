@@ -24,7 +24,7 @@ const MainContent = styled.div`
   };
 
   @media (max-width: ${mobileBreakpoint}px) {
-    padding: 50px 15px;
+    padding: 100px 15px;
   }
 `;
 
