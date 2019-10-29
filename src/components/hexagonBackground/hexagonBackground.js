@@ -73,9 +73,9 @@ export const HexagonBackground = ({ location }) => {
       hexagonHeight,
       sectionHeight,
     } = hexagonDimensions.current;
-
+    console.log('WIDTH', window.innerWidth);
     // Set canvas dimensions
-    canvasRef.current.width = window.innerWidth + (hexagonWidth / 2);
+    canvasRef.current.width = window.innerWidth;
     const neededSections = Math.ceil(window.innerHeight / sectionHeight);
     const height = (sectionHeight * neededSections) + yOffset;
     canvasRef.current.height = height;
