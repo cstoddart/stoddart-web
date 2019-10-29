@@ -26,6 +26,7 @@ export const GlobalStyles = createGlobalStyle`
 
   * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
