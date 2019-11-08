@@ -10,10 +10,9 @@ const PageTitle = styled.h1`
 const IndexPage = () => {
   return (
     <>
-      <PageTitle>To Infinity And Beyond</PageTitle>
-      <p>Welcome to Stoddart Web.</p>
+      <PageTitle>Welcome To Stoddart Web</PageTitle>
       <p>Now go build something great.</p>
-      <Button to="/articles/">Go To Articles</Button>
+      <Button to="/articles/">Articles</Button>
     </>
   );
 };
