@@ -3,7 +3,7 @@ import { graphql } from 'gatsby';
 import styled from 'styled-components';
 
 const PostHeader = styled.div`
-  margin-bottom: 50px;
+  margin-bottom: 100px;
 `;
 
 const PostDate = styled.h5`

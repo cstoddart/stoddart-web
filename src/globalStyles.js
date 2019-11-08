@@ -48,7 +48,7 @@ export const GlobalStyles = createGlobalStyle`
 
   h1, h2, h3, h4, h5, h6 {
     margin: 0;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     letter-spacing: 1px;
     line-height: 1.2;
   }
