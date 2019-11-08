@@ -184,4 +184,11 @@ export const GlobalStyles = createGlobalStyle`
   // .token.variable {
   //   color: #cb4b16; /* orange */
   // }
+
+  /* Blog Post Styles */ TODO: delete this
+  .blog-post-content img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
 `;
