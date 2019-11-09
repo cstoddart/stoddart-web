@@ -63,7 +63,7 @@ export const GlobalStyles = createGlobalStyle`
     color: ${colors.yellow};
   }
 
-  p {
+  p, ul {
     margin-top: 0;
     margin-bottom: 50px;
   }
@@ -99,7 +99,7 @@ export const GlobalStyles = createGlobalStyle`
   pre[class*="language-"] {
     background-color: #002;
     border: 1px solid #ffffff88;
-    margin-bottom: 25px;
+    margin-bottom: 50px;
   }
 
   :not(pre) > code[class*="language-"] {
