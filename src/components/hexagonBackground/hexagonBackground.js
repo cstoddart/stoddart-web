@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { ResizeObserver as ResizeObserverPolyfill } from '@juggle/resize-observer';
 
 import { renderHexagons } from './renderHexagons';
 import { hiddenShapes } from './hiddenShapes';
-import { getPageHeight } from '../../utilities';
 import { DuplicateCanvas } from './duplicateCanvas';
 import { StyledCanvas } from './styled';
 
@@ -37,17 +37,16 @@ function hideHexagons(hexagonsByRow) {
 
 export const HexagonBackground = ({ location }) => {
   const canvasRef = useRef();
-  const currentPathRef = useRef();
-  
+  const hexagonDimensions = useRef({});
+  const hexagonsPerRow = useRef();
+  const hexagonRows = useRef();
+  const ResizeObserver = useRef();
+
   const [duplicateCanvases, setDuplicateCanvases] = useState([]);
   const [pageHeight, setPageHeight] = useState(null);
-  
-  const hexagonDimensions = useRef({});
-  const hexagonsPerRow = useRef(null);
-  const hexagonRows = useRef(null);
 
   useEffect(() => {
-    //Set hexagon dimensions
+    // set hexagon dimensions
     const hexagonWidth = 30;
     const yOffset = Math.tan(30 * Math.PI / 180) * (hexagonWidth / 2);
     const sideLength = (hexagonWidth / 2) / Math.cos(30 * Math.PI / 180);
@@ -64,7 +63,12 @@ export const HexagonBackground = ({ location }) => {
     const neededRows = Math.ceil(window.innerHeight / sectionHeight);
     hexagonRows.current = 8 * neededRows; // 8 rows needed per section
   }, []);
-  
+
+  useEffect(() => {
+    // set ResizeObserver
+    ResizeObserver.current = window.ResizeObserver || ResizeObserverPolyfill;
+  }, []);
+
   useEffect(() => {
     const {
       hexagonWidth,
@@ -73,19 +77,19 @@ export const HexagonBackground = ({ location }) => {
       hexagonHeight,
       sectionHeight,
     } = hexagonDimensions.current;
-    console.log('WIDTH', window.innerWidth);
-    // Set canvas dimensions
+
+    // set canvas dimensions
     canvasRef.current.width = window.innerWidth;
     const neededSections = Math.ceil(window.innerHeight / sectionHeight);
     const height = (sectionHeight * neededSections) + yOffset;
     canvasRef.current.height = height;
 
-    // Get canvas context
+    // get canvas context
     const canvasContext = canvasRef.current.getContext('2d');
     canvasContext.strokeStyle = '#fff';
     canvasContext.lineWidth = 0.75;
 
-    // Render map with hidden shapes
+    // render map with hidden shapes
     const hexagonsByRow = buildHexagonsByRow({ hexagonRows: hexagonRows.current, hexagonsPerRow: hexagonsPerRow.current });
     const hexagonMap = hideHexagons(hexagonsByRow);
     renderHexagons({
@@ -102,21 +106,19 @@ export const HexagonBackground = ({ location }) => {
   }, [canvasRef, hexagonRows, hexagonsPerRow]);
 
   useEffect(() => {
-    if (location.pathname === currentPathRef.current) return;
-
-    // Reset page
-    currentPathRef.current = location.pathname;
-    setDuplicateCanvases([]);
-    setTimeout(() => {
-      const height = getPageHeight();
-      setPageHeight(height);
-    }, 100); // Wait for clientHeight to reach full values
-  }, [location]);
+    // set page height on document.body resize
+    const resizeObserver = new ResizeObserver.current((entries) => {
+      const documentBody = entries[0];
+      const documentHeight = documentBody.contentRect.height;
+      setPageHeight(documentHeight);
+    });
+    resizeObserver.observe(document.body);
+  }, []);
 
   useEffect(() => {
     if (!pageHeight) return;
 
-    // Determine number of canvases needed
+    // determine number of canvases needed
     const totalCanvasCount = Math.ceil(pageHeight / canvasRef.current.height);
     const duplicateCanvasCount = totalCanvasCount - 1;
     setDuplicateCanvases([...Array(duplicateCanvasCount).keys()]);
