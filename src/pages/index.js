@@ -11,7 +11,7 @@ const IndexPage = () => {
   return (
     <>
       <PageTitle>Welcome To Stoddart Web</PageTitle>
-      <p>Now go build something great.</p>
+      <p>A blog about web development</p>
       <Button to="/articles/">Articles</Button>
     </>
   );
